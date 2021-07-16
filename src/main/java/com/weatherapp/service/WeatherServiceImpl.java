@@ -30,8 +30,8 @@ public class WeatherServiceImpl implements WeatherService {
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private String apiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=";
-	private static final String API_KEY = System.getenv("API_KEY"); // appId
-	private static final String responseType = "&mode=json&units=metric&appid="; // mode
+	private static final String API_KEY = System.getenv("API_KEY");
+	private static final String responseType = "&mode=json&units=metric&appid=";
 
 	private ObjectMapper mapper;
 
