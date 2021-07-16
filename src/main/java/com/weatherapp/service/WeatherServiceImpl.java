@@ -8,7 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.cxf.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +26,12 @@ import com.weatherapp.webclients.RestWebClient;
 
 @Service
 public class WeatherServiceImpl implements WeatherService {
+
+	Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	private String apiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=";
-	private static final String appId = "&appid=d2929e9483efc82c82c32ee7e02d563e"; // appId
-	private static final String responseType = "&mode=json&units=metric"; // mode
+	private static final String API_KEY = System.getenv("API_KEY"); // appId
+	private static final String responseType = "&mode=json&units=metric&appid="; // mode
 
 	private ObjectMapper mapper;
 
@@ -34,21 +41,33 @@ public class WeatherServiceImpl implements WeatherService {
 	}
 
 	@Override
+	@Cacheable("Weather")
 	public Weather getWeatherForCity(String city) {
 
 		System.out.println("Inside WeatherServiceImpl:getWeatherForCity()");
+		logger.info("Inside WeatherServiceImpl:getWeatherForCity()");
 		Weather weather = new Weather();
 		try {
 			RestWebClient restClient = RestWebClient.getInstance();
 
-			String reqUrl = new StringBuilder(apiUrl).append(city).append(responseType).append(appId).toString();
+			if (StringUtils.isEmpty(API_KEY)) {
+				logger.debug("Can't extract API_KEY from environment variables");
+				System.out.println("Can't extract API_KEY from environment variables");
+			} else {
+				logger.debug("API_KEY extracted succesfully from environment variables");
+				System.out.println("API_KEY extracted succesfully from environment variables");
+			}
+			String reqUrl = new StringBuilder(apiUrl).append(city).append(responseType).append(API_KEY).toString();
 			System.out.println("About to call open weather API");
+			logger.info("About to call open weather API");
 			ResponseEntity<String> response = restClient.getUrl(restClient, reqUrl);
 			weather = getEntityForResponse(response.getBody(), mapper);
 		} catch (Exception e) {
-			System.out.println("Exception occured in calling open weather API" + e.getMessage());
+			logger.error("Exception occured in calling open weather API", e);
+			System.out.println("Exception occured in calling open weather API -" + e.getMessage());
 		}
 		System.out.println("Returning WeatherServiceImpl:getWeatherForCity()");
+		logger.info("Returning WeatherServiceImpl:getWeatherForCity()");
 		return weather;
 	}
 

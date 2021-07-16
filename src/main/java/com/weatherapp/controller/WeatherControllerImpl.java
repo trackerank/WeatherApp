@@ -1,5 +1,7 @@
 package com.weatherapp.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +22,18 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(tags = { "Weather App REST endpoints" })
-@RequestMapping(value = "/ctrl", produces = "application/hal+json")
+@RequestMapping(value = "/ctrl", produces = "application/json")
 public class WeatherControllerImpl {
 	@Autowired
 	WeatherService service;
+
+	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@GetMapping("/{city}")
 	@ApiOperation(value = "Gathering weather details for requested city", notes = "request data for a city")
 	public Weather getWeatherInfo(@PathVariable("city") String city) {
 		System.out.println("Search for City : " + city);
-
-		// Self link
-
+		logger.info("Search for City : " + city);
 		return service.getWeatherForCity(city);
 	}
 
@@ -47,7 +49,7 @@ public class WeatherControllerImpl {
 		WeatherError error = new WeatherError();
 		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		error.setMessage(e.getMessage());
-
+		logger.error("HTTP 500 error : " + e.getMessage(), e);
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -56,7 +58,7 @@ public class WeatherControllerImpl {
 		WeatherError error = new WeatherError();
 		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		error.setMessage(e.getMessage());
-
+		logger.error("HTTP 500 error : " + e.getMessage(), e);
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -65,7 +67,7 @@ public class WeatherControllerImpl {
 		WeatherError error = new WeatherError();
 		error.setStatus(HttpStatus.BAD_REQUEST);
 		error.setMessage(e.getMessage());
-
+		logger.error("HTTP 400 error : " + e.getMessage(), e);
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
