@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.weatherapp.service.CachingService;
+import com.weatherapp.service.WeatherService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,12 +16,12 @@ import io.swagger.annotations.ApiOperation;
 public class CachingControllerImpl {
 
 	@Autowired
-	CachingService cachingService;
+	WeatherService service;
 
 	@GetMapping("clearAll")
 	@ApiOperation(value = "Clearing cached weather details", notes = "Clear all cached weather details")
 	public String clearAllCaches() {
-		cachingService.evictAllCaches();
+		service.clearAllCaches();
 		return "Successfully cleared cache values";
 
 	}

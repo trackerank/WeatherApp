@@ -29,6 +29,14 @@ public class WeatherControllerImpl {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@GetMapping("/offline/{city}")
+	@ApiOperation(value = "Gathering weather details for requested city", notes = "request data for a city")
+	public Weather getWeatherInfoOffline(@PathVariable("city") String city) {
+		// System.out.println("Search for City : " + city);
+		logger.info("Search for City in offline mode: " + city);
+		return service.getWeatherForCity(city, true);
+	}
+
 	@GetMapping("/{city}")
 	@ApiOperation(value = "Gathering weather details for requested city", notes = "request data for a city")
 	public Weather getWeatherInfo(@PathVariable("city") String city) {
