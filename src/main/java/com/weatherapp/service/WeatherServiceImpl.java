@@ -44,7 +44,7 @@ public class WeatherServiceImpl implements WeatherService {
 	@Cacheable("Weather")
 	public Weather getWeatherForCity(String city) {
 
-		System.out.println("Inside WeatherServiceImpl:getWeatherForCity()");
+		// System.out.println("Inside WeatherServiceImpl:getWeatherForCity()");
 		logger.info("Inside WeatherServiceImpl:getWeatherForCity()");
 		Weather weather = new Weather();
 		try {
@@ -52,21 +52,23 @@ public class WeatherServiceImpl implements WeatherService {
 
 			if (StringUtils.isEmpty(API_KEY)) {
 				logger.debug("Can't extract API_KEY from environment variables");
-				System.out.println("Can't extract API_KEY from environment variables");
+				// System.out.println("Can't extract API_KEY from environment variables");
 			} else {
 				logger.debug("API_KEY extracted succesfully from environment variables");
-				System.out.println("API_KEY extracted succesfully from environment variables");
+				// System.out.println("API_KEY extracted succesfully from environment
+				// variables");
 			}
 			String reqUrl = new StringBuilder(apiUrl).append(city).append(responseType).append(API_KEY).toString();
-			System.out.println("About to call open weather API");
+			// System.out.println("About to call open weather API");
 			logger.info("About to call open weather API");
 			ResponseEntity<String> response = restClient.getUrl(restClient, reqUrl);
 			weather = getEntityForResponse(response.getBody(), mapper);
 		} catch (Exception e) {
 			logger.error("Exception occured in calling open weather API", e);
-			System.out.println("Exception occured in calling open weather API -" + e.getMessage());
+			// System.out.println("Exception occured in calling open weather API -" +
+			// e.getMessage());
 		}
-		System.out.println("Returning WeatherServiceImpl:getWeatherForCity()");
+		// System.out.println("Returning WeatherServiceImpl:getWeatherForCity()");
 		logger.info("Returning WeatherServiceImpl:getWeatherForCity()");
 		return weather;
 	}
@@ -105,17 +107,21 @@ public class WeatherServiceImpl implements WeatherService {
 				if (localDateTime.getDayOfMonth() > currentDate.getDayOfMonth() + 3) {
 					break;
 				}
-				int temp_max = entry.path("main").path("temp_max").asInt();
-				int humidity_level = entry.path("main").path("humidity").asInt();
+				double temp_max = entry.path("main").path("temp_max").asDouble();
+				double temp_min = entry.path("main").path("temp_min").asDouble();
+				double humidity_level = entry.path("main").path("humidity").asDouble();
 				JsonNode weatherList = entry.path("weather");
 				String weather_type = weatherList.get(0).path("main").asText();
-				// System.out.println("weather_main" + weather_type);
+				double wind_speed = entry.path("wind").get(0).path("speed").asDouble();
+				// //System.out.println("weather_main" + weather_type);
 
 				if (forecastMapper.get(localDateTime.getDayOfMonth()) == null) {
 					forecastMapper.put(localDateTime.getDayOfMonth(), new ArrayList<Forecast>());
 				}
+				// .String,double,double,double,java.lang.String,java.lang.String,double
+
 				forecastMapper.get(localDateTime.getDayOfMonth())
-						.add(new Forecast(dateTime, humidity_level, temp_max, weather_type));
+						.add(new Forecast(dateTime, humidity_level, temp_min, temp_max, weather_type, wind_speed, ""));
 
 			}
 		} catch (Exception e) {

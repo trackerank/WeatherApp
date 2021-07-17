@@ -32,7 +32,7 @@ public class WeatherControllerImpl {
 	@GetMapping("/{city}")
 	@ApiOperation(value = "Gathering weather details for requested city", notes = "request data for a city")
 	public Weather getWeatherInfo(@PathVariable("city") String city) {
-		System.out.println("Search for City : " + city);
+		// System.out.println("Search for City : " + city);
 		logger.info("Search for City : " + city);
 		return service.getWeatherForCity(city);
 	}

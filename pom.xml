@@ -55,7 +55,13 @@
 			  <groupId>com.cyberark.conjur.api</groupId>
 			  <artifactId>conjur-api</artifactId>
 			  <version>${conjur.version}</version>
-		</dependency> 
+		</dependency>
+ 		<dependency>
+		   <groupId>org.projectlombok</groupId>
+		   <artifactId>lombok</artifactId>
+		   <version>1.18.12</version>
+        <scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
